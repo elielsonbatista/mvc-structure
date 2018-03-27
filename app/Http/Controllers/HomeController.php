@@ -6,9 +6,9 @@ use Src\ORM\DB;
 
 class HomeController
 {
-    public static function index()
+    public function index()
     {
-        DB::table('ops');
-        return 'opa';
+        $table_1 = DB::table('table_1')->first();
+        echo $table_1->column_1;
     }
 }
