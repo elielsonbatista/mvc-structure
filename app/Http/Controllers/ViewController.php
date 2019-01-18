@@ -8,6 +8,6 @@ class ViewController
 {
     public function index()
     {
-        return view('index.html')->render();
+        return view('index.html');
     }
 }

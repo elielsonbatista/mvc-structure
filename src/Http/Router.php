@@ -4,7 +4,6 @@ namespace Src\Http;
 
 class Router
 {
-    private $controllers_path = '\\App\\Http\\Controllers';
     public $routes = [];
 
     public function get($url, $action)
@@ -22,7 +21,7 @@ class Router
             $split_action = explode('@', $callback);
 
             return $this->actionResponse(
-                $this->controllers_path . '\\' . $split_action[0],
+                CONTROLLERS_NAMESPACE . '\\' . $split_action[0],
                 $split_action[1]
             );
         } else {
@@ -32,7 +31,6 @@ class Router
 
     private function actionResponse($controller, $action)
     {
-        $controller = new $controller();
-        return $controller->$action();
+        return (new $controller)->$action();
     }
 }

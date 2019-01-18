@@ -4,7 +4,6 @@ namespace Src\View;
 
 class View
 {
-    private $views_path = '../resource/views/';
     private $view;
 
     public function __construct($view)
@@ -12,9 +11,13 @@ class View
         return $this->view = $view;
     }
 
+    public function __toString()
+    {
+        return $this->render();
+    }
+
     public function render()
     {
-        $content = file_get_contents($this->views_path . $this->view);
-        return $content;
+        return file_get_contents(VIEWS_PATH . '/' . $this->view);
     }
 }
