@@ -4,9 +4,21 @@ namespace Src\Http;
 
 class Router
 {
+    /**
+     * The list of routes that can be accessed
+     *
+     * @var array
+     */
     public $routes = [];
 
-    public function get($url, $action)
+    /**
+     * Add a route to the list
+     *
+     * @param  string $url
+     * @param  string|callable $action
+     * @return void
+     */
+    public function get(string $url, $action): void
     {
         if (strlen($url) && $url[0] != '/') {
             $url = '/' . $url;
@@ -15,6 +27,12 @@ class Router
         $this->routes[$url] = $action;
     }
 
+    /**
+     * Access the route and get the content
+     *
+     * @param  string|callable $callback
+     * @return mixed
+     */
     public function access($callback)
     {
         if (is_string($callback)) {
@@ -24,12 +42,19 @@ class Router
                 CONTROLLERS_NAMESPACE . '\\' . $split_action[0],
                 $split_action[1]
             );
-        } else {
-            return $callback();
         }
+
+        return $callback();
     }
 
-    private function actionResponse($controller, $action)
+    /**
+     * Call an action of a controller
+     *
+     * @param  string $controller
+     * @param  string $action
+     * @return mixed
+     */
+    private function actionResponse(string $controller, string $action)
     {
         return (new $controller)->$action();
     }

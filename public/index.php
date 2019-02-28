@@ -14,7 +14,7 @@ require '../bootstrap/autoload.php';
 /**
  * Registering Routes
  */
-$router = new \Src\Http\Router();
+$router = new \Src\Http\Router;
 
 require '../routes/web.php';
 

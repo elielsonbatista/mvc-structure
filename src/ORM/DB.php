@@ -2,25 +2,61 @@
 
 namespace Src\ORM;
 
-use PDO;
-
 class DB
 {
+    /**
+     * The connection statement
+     *
+     * @var \PDO
+     */
     private $connection;
-    private $table;
+
+    /**
+     * The table which the query is targeting
+     *
+     * @var string
+     */
+    private $from;
+
+    /**
+     * The columns to be selected
+     *
+     * @var string|array
+     */
     private $select = '*';
+
+    /**
+     * The join clause
+     *
+     * @var array
+     */
     private $join = [];
+
+    /**
+     * The where clause
+     *
+     * @var array
+     */
     private $where = [];
 
-    public function __construct($table)
+    /**
+     * Create the instance and set connection
+     *
+     * @return void
+     */
+    public function __construct()
     {
         $this->connection = $this->connect();
-        $this->table = $table;
     }
 
-    private function connect()
+    /**
+     * Connect to database
+     *
+     * @return \PDO
+     */
+    private function connect(): \PDO
     {
-        return new PDO(
+        return new \PDO(
             DB_CONNECTION .
             ':host=' . DB_HOST .
             ';dbname=' . DB_DATABASE,
@@ -29,13 +65,41 @@ class DB
         );
     }
 
-    public function select($fields)
+    /**
+     * Set the columns to be selected
+     *
+     * @param  string|array $columns
+     * @return $this
+     */
+    public function select($columns): self
     {
-        $this->select = $fields;
+        $this->select = $columns;
+
         return $this;
     }
 
-    public function where($column, $operator, $value = null)
+    /**
+     * Set the table which the query is targeting
+     *
+     * @param  string $table
+     * @return $this
+     */
+    public function from(string $table): self
+    {
+        $this->from = $table;
+
+        return $this;
+    }
+
+    /**
+     * Add a where clause to the query
+     *
+     * @param  string $column
+     * @param  string $operator
+     * @param  mixed  $column
+     * @return $this
+     */
+    public function where(string $column, string $operator, $value = null): self
     {
         if ($value === null) {
             $value = $operator;
@@ -43,15 +107,33 @@ class DB
         }
 
         $this->where[] = [$column, $operator, $value];
+
         return $this;
     }
 
-    public function join($table, $column_1, $operator, $column_2) {
+    /**
+     * Add a join clause to the query
+     *
+     * @param  string $table
+     * @param  string $column_1
+     * @param  string $operator
+     * @param  string $column_2
+     * @return self
+     */
+    public function join(string $table, string $column_1, string $operator, string $column_2): self
+    {
         $this->join[] = [$table, $column_1, $operator, $column_2];
+
         return $this;
     }
 
-    private function build($limit = null)
+    /**
+     * Build the query
+     *
+     * @param  int $limit
+     * @return \PDOStatement
+     */
+    private function build(int $limit = null): \PDOStatement
     {
         $select = $this->select;
         $join = '';
@@ -73,29 +155,48 @@ class DB
             }
         }
 
-        $query = "SELECT {$select} FROM {$this->table} {$join} {$where}";
+        $query = "SELECT {$select} FROM {$this->from} {$join} {$where}";
 
         if ($limit !== null) {
             $query .= "LIMIT {$limit}";
         }
 
         return $this->connection->query(
-            "SELECT {$select} FROM {$this->table} {$join} {$where}"
+            "SELECT {$select} FROM {$this->from} {$join} {$where}"
         );
     }
 
-    public function get()
+    /**
+     * Get the query result
+     *
+     * @return array
+     */
+    public function get(): array
     {
-        return $this->build()->fetchAll(PDO::FETCH_OBJ);
+        return $this->build()->fetchAll(\PDO::FETCH_OBJ);
     }
 
-    public function first()
+    /**
+     * Set query limit to 1 result row and get it.
+     *
+     * @return \stdClass
+     */
+    public function first(): \stdClass
     {
-        return $this->build(1)->fetch(PDO::FETCH_OBJ);
+        return $this->build(1)->fetch(\PDO::FETCH_OBJ);
     }
 
-    public static function table($name)
+    /**
+     * Begin a query against a database table
+     *
+     * @param  string $table
+     * @return self
+     */
+    public static function table($table): self
     {
-        return new self($name);
+        $instance = new self;
+        $instance->from($table)->first();
+
+        return $instance;
     }
 }

@@ -9,6 +9,7 @@ class HomeController
     public function index()
     {
         $table_1 = DB::table('table_1')->first();
-        echo $table_1->column_1;
+        
+        return $table_1->column_1;
     }
 }
