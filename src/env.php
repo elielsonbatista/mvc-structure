@@ -1,11 +1,15 @@
 <?php
 
-define('DB_CONNECTION', 'mysql');
-define('DB_PORT', 3306);
-define('DB_HOST', 'mysql');
-define('DB_DATABASE', 'mvc');
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', 'root');
+// APPLICATION
 
-define('CONTROLLERS_NAMESPACE', 'App\\Http\\Controllers');
-define('VIEWS_PATH', '../resource/views');
+putenv('CONTROLLERS_NAMESPACE=App\\Http\\Controllers');
+putenv('VIEWS_PATH=../resource/views');
+
+// DATABASE
+
+putenv('DB_CONNECTION=mysql');
+putenv('DB_PORT=3306');
+putenv('DB_HOST=mysql');
+putenv('DB_DATABASE=mvc');
+putenv('DB_USERNAME=root');
+putenv('DB_PASSWORD=root');
